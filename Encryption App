@@ -1,0 +1,379 @@
+// CSCI 1300 Fall 2023
+// Author: David Thumma
+// TA: Vrinda Anil
+// Question 8
+
+#include <iostream>
+#include <string>
+#include <cassert>
+#include <limits>
+
+using namespace std;
+char shiftChar(char character, int shift){
+    string alp = "abcdefghijklmnopqrstuvwxyz";
+    char new_char = character;
+    for (int i=0; i < 26; i++){
+        if (alp[i] == character){
+            
+            if (shift<0){
+                int temp2=i+shift+26;
+                while(temp2<0){
+                  temp2+=26;
+                }
+                if (temp2>=26){
+                    temp2%=26;
+                }
+                else if(temp2<0){
+                    temp2%=-26;
+                }
+                new_char = alp[temp2];
+                
+            }
+            else{
+                int temp = i+shift;
+                if (temp>=26){
+                    temp%=26;
+                }
+                new_char = alp[temp];
+            }
+        }
+    }
+        return new_char;
+}
+int getMethod2ShiftAmount(string key1){
+    int length;
+    int vowels = 0;
+    int shift;
+
+    length = key1.length();
+    for (int i=0; i<length; i++){
+        key1[i]=tolower(key1[i]);
+        if (key1[i]=='a'|| key1[i]=='e' || key1[i]=='i' || key1[i]=='o' || key1[i]=='u' || key1[i]=='y'){
+            vowels++;
+        }
+    }
+    shift = (length+vowels)%26;
+
+    return shift;
+
+}
+
+int getMethod3ShiftAmount(string key1, string key2){
+    int times1;
+    int times2;
+    int shift=0;
+    times1 = key1.length();
+    times2 = key2.length();
+
+    for(int i=0;i < times1;i++){
+        int o=0;
+        while(o<times2){
+            if(key1[i]==key2[o]){
+                shift++;
+            }
+            o++;
+        }
+
+    }
+    return shift%26;
+}
+
+
+char encryptChar(char c,int method_choice, string key1, string key2){
+    char encrypted = c;
+    int shift;
+    if(method_choice != 1 && method_choice != 2 && method_choice != 3){
+        cout << "Invalid encryption method" << endl;
+    }
+    else{
+        switch(method_choice){
+            case 1:
+                encrypted = shiftChar(c, 1);
+                break;
+            case 2:
+                shift = getMethod2ShiftAmount(key1);
+                encrypted = shiftChar(c, shift);
+                break;
+            case 3:
+                shift = getMethod3ShiftAmount(key1, key2);
+                encrypted = shiftChar(c, shift);
+                break;
+        }
+    }
+    return encrypted;
+
+}
+
+string encryptMessage(string s,int method_choice, string key1, string key2){
+    
+    string newstring = "";
+    int length = s.length();
+    
+    
+    if(method_choice != 1 && method_choice != 2 && method_choice != 3 && method_choice != 4){
+        newstring = s;
+        cout << "Invalid encryption method" << endl;
+    }
+    else{
+        switch(method_choice){
+            case 1:
+                for (int i = 0; i < length; i++){
+                    char encrypted = s[i];
+                    encrypted = encryptChar(encrypted, 1, key1, key2);
+                    newstring += encrypted;
+
+                }
+                break;
+            case 2:
+                    for (int i = 0; i < length; i++){
+                        char encrypted = s[i];
+                        encrypted = encryptChar(encrypted, 2, key1, key2);
+                        newstring += encrypted;
+
+                    }
+                break;
+            case 3:
+                for (int i = 0; i < length; i++){
+                        char encrypted = s[i];
+                        encrypted = encryptChar(encrypted, 3, key1, key2);
+                        newstring += encrypted;
+                    }
+
+                break;
+            case 4:
+                for (int i=0;i<length;i++){
+                    char encrypted = s[i];
+                    int u = i+3;
+                    if(u % 3 == 0){
+                    newstring = newstring + encryptChar(encrypted, 1, key1, key2);
+
+                    }
+
+                    else if(u % 3 == 1){
+                    newstring = newstring + encryptChar(encrypted, 2, key1, key2);
+
+                    }
+                    else{
+                    newstring = newstring + encryptChar(encrypted, 3, key1, key2);
+
+                    }
+                }
+                break;
+        }
+
+    }
+    return newstring;
+
+}
+
+
+char decryptChar(char c,int method_choice, string key1, string key2){
+    char decrypt = c;
+    int shift;
+    if(method_choice != 1 && method_choice != 2 && method_choice != 3){
+        cout << "Invalid decryption method" << endl;
+    }
+    else{
+        switch(method_choice){
+            case 1:
+                decrypt = shiftChar(c, -1);
+                break;
+            case 2:
+                shift = getMethod2ShiftAmount(key1)*-1;
+                decrypt = shiftChar(c, shift);
+                break;
+            case 3:
+                shift = getMethod3ShiftAmount(key1, key2)*-1;
+                decrypt = shiftChar(c, shift);
+                break;
+        }
+    }
+    return decrypt;
+
+}
+    
+string decryptMessage(string s,int method_choice, string key1, string key2){
+    
+    string newstring = "";
+    int length = s.length();
+    
+    
+    if(method_choice != 1 && method_choice != 2 && method_choice != 3 && method_choice != 4){
+        newstring = s;
+        cout << "Invalid decryption method" << endl;
+    }
+    else{
+        switch(method_choice){
+            case 1:
+                for (int i = 0; i < length; i++){
+                    char encrypted = s[i];
+                    encrypted = decryptChar(encrypted, 1, key1, key2);
+                    newstring += encrypted;
+
+                }
+                break;
+            case 2:
+                for (int i = 0; i < length; i++){
+                    char encrypted = s[i];
+                    encrypted = decryptChar(encrypted, 2, key1, key2);
+                    newstring += encrypted;
+                }
+                break;
+            case 3:
+                for (int i = 0; i < length; i++){
+                    char encrypted = s[i];
+                    encrypted = decryptChar(encrypted, 3, key1, key2);
+                    newstring += encrypted;
+                    }
+
+                break;
+            case 4:
+                for (int i=0;i<length;i++){
+                    char encrypted = s[i];
+                    int u = i+3;
+                    if(u % 3 == 0){
+                        newstring = newstring + decryptChar(encrypted, 1, key1, key2);
+                    }
+                    else if(u % 3 == 1){
+                        newstring = newstring + decryptChar(encrypted, 2, key1, key2);
+
+                    }
+                    else{
+                        
+                        newstring = newstring + decryptChar(encrypted, 3, key1, key2);
+                    }
+                }
+                break;
+        }
+
+    }
+    return newstring;
+
+}
+
+
+
+int main(){
+    int choice = 0;
+    string key1 = "";
+    string key2 = "";
+    int method = 0;
+    string encryptedMessage;
+    string string1;
+    string decryptedMessage;
+   
+
+    cout <<"Please input 1-6 followed by enter to navigate the menu:" << endl <<
+    "1. Set Encryption Key 1" << endl <<
+    "2. Set Encryption Key 2" << endl <<
+    "3. Select Encryption Method" << endl <<
+    "4. Encrypt Message" << endl <<
+    "5. Decrypt Message" << endl <<
+    "6. Exit Program" << endl;
+    cin >> choice; 
+    cin.ignore(10000, '\n');
+    
+
+        while (choice != 6) { //loops program untik exit
+        if (cin.fail() || choice>6 || choice<1 || choice==0){ //input control
+            if(cin.fail()){
+                cout << "Invalid input"<<endl;
+                cin.clear();
+                cin.ignore(10000, '\n');
+                cin >> choice; 
+                cin.ignore(10000, '\n');
+
+            }
+            else{
+            cout << "Invalid input"<<endl;
+            cin.clear();
+            cin >> choice; 
+            }
+        }
+        else{
+            switch(choice){
+                case 1: // set encryption key1
+                    cout << "Enter key:" << endl;
+                    getline(cin, key1);
+                    while(key1.length() <= 0 || key1==" "){
+                        cout << "Invalid key" << endl;
+                        cout << "Enter key:" << endl;
+                        getline(cin, key1);       
+                    }  
+ 
+                    cout << "Successfully set encryption key1 to "<< key1 << endl;
+                    cin.clear();
+                    break;
+                case 2: // set encryption key2
+                    cout << "Enter key:" << endl;
+                    getline(cin, key2);
+                    while(key2.length() <= 0 || key2==" "){
+                        cout << "Invalid key" << endl;
+                        cout << "Enter key:" << endl;
+                        getline(cin, key2);       
+                    
+                    }
+                    cout << "Successfully set encryption key2 to "<< key2 << endl;
+                    cin.clear();
+                    break;
+            
+                
+                case 3:
+                    cout << "Please input 1-4 to decide encryption technique." << endl <<
+                    "1. Method1 only (shift by 1)"<< endl  <<
+                    "2. Method2 only (shift by first key)" << endl <<
+                    "3. Method3 only (shift by both keys) "<< endl <<
+                    "4. Mix of Method1, Method2, Method3 "<< endl;
+                    cin >> method;
+                    while (cin.fail() || method<1 || method>4){
+                        cout << "Invalid encryption choice" << endl;
+                        cin.clear();
+                        cin.ignore(10000,10);
+                        cin >> method;
+                    }
+
+                    cout << "Successfully set encryption type to " << method << endl;
+                    break;
+                case 4: 
+                    if(key1.length()<1 || key2.length()<1 || method == 0){
+                        cout << "You cannot do this until you set both keys and choose an encryption method" << endl;
+                        break;
+                    }
+                    cin.clear();
+                    cout << "Enter your message to encrypt:" << endl;
+                    getline(cin, string1);     
+                    encryptedMessage = encryptMessage(string1, method, key1, key2);
+                    cout << encryptedMessage << endl;
+                    break;
+
+                case 5:
+                    if(key1.length()<1 || key2.length()<1 || method == 0){
+                            cout << "You cannot do this until you set both keys and choose an encryption method" << endl;
+                            break;
+                        }
+                        cin.clear();
+                        cout << "Enter your message to decrypt:" << endl;
+                        getline(cin, string1);                          
+                        decryptedMessage = decryptMessage(string1, method, key1, key2);
+                        cout << decryptedMessage << endl;
+                        break;
+
+            }
+             cout <<"Please input 1-6 followed by enter to navigate the menu:" << endl <<
+    "1. Set Encryption Key 1" << endl <<
+    "2. Set Encryption Key 2" << endl <<
+    "3. Select Encryption Method" << endl <<
+    "4. Encrypt Message" << endl <<
+    "5. Decrypt Message" << endl <<
+    "6. Exit Program" << endl;
+    cin >> choice;
+    cin.ignore(10000, '\n');
+
+        
+        }
+   
+    }
+    cout << "Goodbye."<< endl;
+    return 0;
+}
+
