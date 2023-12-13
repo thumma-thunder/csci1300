@@ -1,0 +1,8 @@
+Name: Ethan
+Character: Lollipop_Lilly
+Gold: 7
+Stamina: 50
+Candies: 
+Mystic Marshmallow
+Hairy Lollipop
+Fearsome Fudge
